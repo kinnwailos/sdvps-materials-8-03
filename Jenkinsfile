@@ -50,6 +50,7 @@ pipeline {
         }
     }
 
+
     post {
         always {
             cleanWs()
@@ -60,5 +61,14 @@ pipeline {
         failure {
             echo "❌ Ошибка сборки!"
         }
+    }
+}
+stage('Upload to Nexus') {
+    steps {
+        sh '''
+            curl -v -u admin:Nexus123! \
+                 --upload-file app \
+                 http://localhost:8081/repository/go-binaries/app-${BUILD_NUMBER}
+        '''
     }
 }
