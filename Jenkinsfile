@@ -1,22 +1,20 @@
-// Jenkinsfile — Declarative Pipeline для Go-проекта
+// Jenkinsfile — исправленная версия
 pipeline {
     agent any
-    
+
     environment {
-        // Переменные для повторного использования
         DOCKER_IMAGE = "my-go-app"
-        GO_ENTRYPOINT = "/home/vboxuser/sdvps-materials-8-03/main.go"  // ← ИЗМЕНИТЕ на путь к вашему main.go
+        // GO_ENTRYPOINT = "./main.go"  // Раскомментируйте, если main.go не в корне
     }
-    
+
     stages {
         stage('Checkout') {
             steps {
-                // Клонируем репозиторий (автоматически через SCM)
                 checkout scm
                 echo "📦 Исходный код получен"
             }
         }
-        
+
         stage('Test') {
             steps {
                 echo "🔍 Запуск тестов Go..."
@@ -26,44 +24,41 @@ pipeline {
                 '''
             }
         }
-        
+
         stage('Build Binary') {
             steps {
                 echo "🔨 Сборка Go-бинарника..."
                 sh '''
-                    # Сборка статического бинарника для Linux
-                    CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o app ${GO_ENTRYPOINT}
-                    
-                    # Проверка, что файл создан
+                    # Если main.go в корне - просто:
+                    CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o app
+
+                    # Если main.go в поддиректории - укажите относительный путь:
+                    # CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o app ./cmd/main.go
+
                     ls -lh app
                 '''
             }
         }
-        
+
         stage('Build Docker Image') {
             steps {
                 echo "🐳 Сборка Docker-образа..."
                 script {
-                    // Используем docker CLI напрямую (проще и надёжнее)
                     sh "docker build -t ${DOCKER_IMAGE}:${env.BUILD_NUMBER} ."
-                    sh "docker images | grep ${DOCKER_IMAGE}"
                 }
             }
         }
     }
-    
+
     post {
-        // Действия после завершения pipeline
         always {
-            // Очищаем workspace, чтобы не занимать место
             cleanWs()
         }
         success {
-            echo "✅ Сборка завершена успешно! Образ: ${DOCKER_IMAGE}:${env.BUILD_NUMBER}"
+            echo "✅ Сборка завершена успешно!"
         }
         failure {
-            echo "❌ Ошибка сборки! Проверьте Console Output"
-            // Можно добавить отправку уведомления здесь
+            echo "❌ Ошибка сборки!"
         }
     }
 }
