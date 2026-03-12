@@ -71,4 +71,4 @@
 - Pipeline загружает бинарник через curl с авторизацией
 ![6](Pictures/Screenshot_2026-03-08_16-13-14.png)
 ![7](Pictures/Screenshot_2026-03-08_16-13-29.png)
-![8](Pictures/Screenshot_2026-03-08_16-14-09.png)
+![8](Pictures/Screenshot_2026-03-08_16-14-09.png)# trigger pipeline
