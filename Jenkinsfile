@@ -47,7 +47,7 @@ pipeline {
                     fi
 
                     # Загрузка (ЗАМЕНИТЕ ПАРОЛЬ НА ВАШ!)
-                    curl -v -u "admin:140500Ruzik///" \
+                    curl -v -u "admin:123000///123" \
                          --upload-file app \
                          http://localhost:8081/repository/go-binaries/app-${BUILD_NUMBER}
 
