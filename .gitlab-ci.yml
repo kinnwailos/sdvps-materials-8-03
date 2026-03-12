@@ -1,0 +1,36 @@
+stages:
+  - build
+  - test
+  - deploy
+
+variables:
+  PROJECT_NAME: "my-app"
+
+build:
+  stage: build
+  image: golang:1.21-alpine
+  script:
+    - echo "🔨 Building project..."
+    - mkdir -p build
+    - echo "Build artifact" > build/app.txt
+    - ls -la build/
+  artifacts:
+    paths:
+      - build/
+    expire_in: 1 week
+
+test:
+  stage: test
+  image: golang:1.21-alpine
+  script:
+    - echo "🧪 Running tests..."
+    - echo "All tests passed!"
+
+deploy:
+  stage: deploy
+  image: alpine:latest
+  script:
+    - echo "🚀 Deploying (demo)..."
+    - echo "Deployment complete"
+  only:
+    - main
